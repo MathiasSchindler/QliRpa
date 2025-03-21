@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QliRpa - QR-Code-basierte Musikspeicherung</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 2em;
+            max-width: 800px; /* Begrenzung der Breite */
+            margin-left: auto;  /* Zentrierung */
+            margin-right: auto;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        img {
+            max-width: 100%; /* Bilder responsiv machen */
+            height: auto;
+            display: block; /* Block-Element für Zentrierung */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        audio {
+            width: 100%; /* Audio-Player volle Breite */
+            display: block; /* Block-Element für Zentrierung */
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 1em;
+            margin-bottom: 1em;
+
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 1em;
+            overflow-x: auto; /* Horizontales Scrollen für Code */
+            border: 1px solid #ccc;
+        }
+        code {
+            font-family: monospace;
+        }
+        .credits, .license-section {
+            margin-top: 2em;
+            border-top: 1px solid #ccc;
+            padding-top: 1em;
+        }
+        .warning {
+          border-left: 5px solid #f0ad4e;
+          background-color: #fcf8e3;
+          padding: 0.5em;
+          margin: 1em 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>QliRpa - QR-Code-basierte Musikspeicherung</h1>
+
+    <p>
+        QliRpa (ein Kofferwort aus "QR" und "april" rückwärts) ist eine Open-Source-Implementierung,
+        die von dem Artikel "MusiqR" in der c't 2025, Heft 7, Seite 32 (von Hartmut Gieselmann)
+        inspiriert wurde. Das Projekt ermöglicht es, Musikdateien (MP3) in QR-Codes zu kodieren
+        und sie aus diesen wiederherzustellen. Es dient als Machbarkeitsstudie und erforscht
+        die Grenzen und Möglichkeiten der Speicherung von Audiodaten in Bildformaten.
+    </p>
+
+    <p>
+        <strong>Kernidee:</strong> Eine MP3-Datei wird in ein komprimiertes Zwischenformat (TSAC)
+        umgewandelt, Base64-kodiert und dann als QR-Code dargestellt. Der umgekehrte Prozess
+        extrahiert die Base64-Daten aus dem QR-Code, dekodiert sie und wandelt sie zurück in
+        eine WAV-Datei (und optional in eine MP3-Datei).
+    </p>
+
+    <h2>Credits</h2>
+
+    <ul class="credits">
+        <li><strong>Hartmut Gieselmann:</strong> Für die ursprüngliche Idee und den Artikel "MusiqR" in der c't.</li>
+        <li><strong>Fabrice Bellard:</strong> Für die Entwicklung des TSAC-Audio-Codecs (<a href="https://bellard.org/tsac/">https://bellard.org/tsac/</a>), der die Grundlage für die effiziente Audiokompression bildet.</li>
+        <li><strong>Google Gemini:</strong> Für die Unterstützung bei der Erstellung der Python-Skripte für die Kodierung und Dekodierung.</li>
+        <li><strong>Entwickler der verwendeten Bibliotheken:</strong> <code>qrcode</code>, <code>pyzbar</code>, <code>Pillow</code>, <code>base64</code>, und <code>subprocess</code>.</li>
+    </ul>
+
+    <h2>Funktionsweise</h2>
+
+    <p>Das Projekt besteht aus zwei Haupt-Python-Skripten:</p>
+
+    <ol>
+        <li>
+            <strong><code>qr-gen.py</code>:</strong>
+            <ul>
+                <li>Konvertiert eine MP3-Datei in eine TSAC-Datei mithilfe des <code>tsac</code>-Programms (von Fabrice Bellard).</li>
+                <li>Kodiert die Binärdaten der TSAC-Datei mit Base64, um sie QR-Code-kompatibel zu machen.</li>
+                <li>Erzeugt einen QR-Code aus den Base64-kodierten Daten und speichert ihn als PNG-Bild.</li>
+            </ul>
+        </li>
+        <li>
+            <strong><code>qr-dec.py</code>:</strong>
+            <ul>
+                <li>Liest einen QR-Code aus einer PNG-Datei.</li>
+                <li>Dekodiert die Base64-kodierten Daten.</li>
+                <li>Speichert die dekodierten Binärdaten als TSAC-Datei.</li>
+                <li>Konvertiert die TSAC-Datei mithilfe des <code>tsac</code>-Programms in eine WAV-Datei.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2>Installation und Verwendung</h2>
+
+    <h3>Voraussetzungen</h3>
+
+    <ul>
+        <li><strong>Python 3.7+:</strong> Stelle sicher, dass Python 3.7 oder höher installiert ist.</li>
+        <li><strong><code>tsac</code>:</strong> Lade das <code>tsac</code>-Programm von <a href="https://bellard.org/tsac/">https://bellard.org/tsac/</a> herunter und lege es entweder in dasselbe Verzeichnis wie die Python-Skripte oder in ein Verzeichnis, das in deiner <code>PATH</code>-Umgebungsvariablen enthalten ist. Stelle sicher, dass es ausführbar ist (`chmod +x tsac` unter Linux/macOS).</li>
+        <li>
+            <strong>Python-Bibliotheken:</strong> Installiere die benötigten Bibliotheken mit:
+            <pre><code>pip install qrcode pyzbar Pillow</code></pre>
+        </li>
+    </ul>
+
+    <h3>Benutzung</h3>
+
+    <ol>
+        <li>
+            <strong>MP3 in QR-Code umwandeln:</strong>
+            <pre><code>python qr-gen.py &lt;mp3_datei&gt; &lt;qr_code_datei.png&gt;</code></pre>
+            Beispiel:
+            <pre><code>python qr-gen.py meine_musik.mp3 mein_qr_code.png</code></pre>
+        </li>
+        <li>
+            <strong>QR-Code in WAV-Datei umwandeln:</strong>
+            <pre><code>python qr-dec.py &lt;qr_code_datei.png&gt; -o &lt;ausgabe_datei.wav&gt;</code></pre>
+            Beispiel:
+            <pre><code>python qr-dec.py mein_qr_code.png -o meine_musik.wav</code></pre>
+            <strong>Optional:</strong> Du kannst die erzeugte WAV-Datei mit <code>ffmpeg</code> wieder zurück in eine MP3-Datei verwandeln.
+        </li>
+    </ol>
+
+    <h2>Limitierungen und wichtige Hinweise</h2>
+<div class = "warning">
+
+*   **Datenmenge:** QR-Codes haben eine begrenzte Kapazität. Die tatsächliche Größe der speicherbaren Musik hängt von der Version des QR-Codes, dem Fehlerkorrekturlevel und der Effizienz der TSAC-Kompression ab. Längere Musikstücke oder höhere Audioqualitäten benötigen möglicherweise mehrere QR-Codes (dies ist in der aktuellen Version *nicht* implementiert).
+
+*   **Binärdaten in QR-Codes:** Das direkte Speichern von Binärdaten in QR-Codes ist problematisch, da QR-Code-Reader oft versuchen, die Daten als Text in einem unbekannten Zeichensatz zu interpretieren. Dies führt zu Datenverfälschungen. QliRpa verwendet *Base64-Kodierung*, um dieses Problem zu umgehen. Base64 wandelt Binärdaten in eine reine Textdarstellung um, die von QR-Code-Readern problemlos verarbeitet werden kann. Der Nachteil ist ein erhöhter Platzbedarf (ca. 33%).
+
+*   **Fehlerkorrektur:** QR-Codes verfügen über eine integrierte Fehlerkorrektur. Es wird empfohlen, mindestens den Fehlerkorrekturlevel "L" (Low) zu verwenden. Höhere Fehlerkorrekturlevel (M, Q, H) erhöhen die Robustheit gegenüber Beschädigungen des QR-Codes, reduzieren aber die verfügbare Datenkapazität.
+
+* **`tsac`:** Dieses Projekt verwendet den TSAC-Audiocodec von Fabrice Bellard. Es ist wichtig, die Lizenzbedingungen von TSAC zu beachten.
+
+*   **Keine perfekte Rekonstruktion:** Die Kompressionsverfahren (sowohl MP3 als auch TSAC) sind verlustbehaftet. Die aus dem QR-Code zurückgewonnene WAV-Datei ist *nicht* bit-identisch zur originalen MP3-Datei.
+</div>
+    <h2>Beispiel</h2>
+
+    <p>Hier ist der QR-Code, der aus der Beispieldatei <code>ast.mp3</code> generiert wurde:</p>
+
+    <img src="ast.png" alt="QR Code">
+
+    <p>Und hier ist die resultierende WAV-Datei, die aus dem QR-Code dekodiert wurde:</p>
+
+    <audio controls>
+      <source src="data:audio/wav;base64,` + base64_encoded_wav_data + `" type="audio/wav">
+      Dein Browser unterstützt das Audio-Element nicht.
+    </audio>
+
+    <div class="license-section">
+    <h2>Lizenz</h2>
+
+    <p>
+        Der Python-Code in diesem Projekt ist unter der CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+        lizenziert. Du kannst den Code kopieren, modifizieren, verteilen und verwenden, auch für kommerzielle
+        Zwecke, ohne um Erlaubnis zu fragen. Siehe die Datei <a href="LICENSE">LICENSE</a> für Details.
+        Beachte jedoch, dass <code>tsac</code> seine eigenen Lizenzbedingungen hat.
+    </p>
+    </div>
+
+</body>
+</html>
