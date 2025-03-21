@@ -82,12 +82,6 @@ Hier ist der QR-Code, der aus der Beispieldatei `ast.mp3` generiert wurde:
 
 ![QR Code](ast.png)
 
-Und hier ist die resultierende WAV-Datei, die aus dem QR-Code dekodiert wurde (Base64-kodiert, um sie direkt in Markdown einzubetten):
-
-<audio controls>
-  <source src="data:audio/wav;base64,` + base64_encoded_wav_data + `" type="audio/wav">
-  Dein Browser unterstützt das Audio-Element nicht.
-</audio>
 
 ## Lizenz
 
