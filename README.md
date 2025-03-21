@@ -62,7 +62,6 @@ Das Projekt besteht aus zwei Haupt-Python-Skripten:
     ```bash
     python qr-dec.py mein_qr_code.png -o meine_musik.wav
     ```
-
     **Optional:** Du kannst die erzeugte WAV-Datei mit `ffmpeg` wieder zurück in eine MP3-Datei verwandeln.
 
 ## Limitierungen und wichtige Hinweise
@@ -77,6 +76,19 @@ Das Projekt besteht aus zwei Haupt-Python-Skripten:
 
 *   **Keine perfekte Rekonstruktion:** Die Kompressionsverfahren (sowohl MP3 als auch TSAC) sind verlustbehaftet. Die aus dem QR-Code zurückgewonnene WAV-Datei ist *nicht* bit-identisch zur originalen MP3-Datei.
 
+## Beispiel
+
+Hier ist der QR-Code, der aus der Beispieldatei `ast.mp3` generiert wurde:
+
+![QR Code](ast.png)
+
+Und hier ist die resultierende WAV-Datei, die aus dem QR-Code dekodiert wurde (Base64-kodiert, um sie direkt in Markdown einzubetten):
+
+<audio controls>
+  <source src="data:audio/wav;base64,` + base64_encoded_wav_data + `" type="audio/wav">
+  Dein Browser unterstützt das Audio-Element nicht.
+</audio>
+
 ## Lizenz
 
-Der Python-Code in diesem Projekt ist unter der CC0 1.0 Universal (CC0 1.0) Public Domain Dedication lizenziert.  Du kannst den Code kopieren, modifizieren, verteilen und verwenden, auch für kommerzielle Zwecke, ohne um Erlaubnis zu fragen. Siehe die Datei [LICENSE](LICENSE) für Details. Beachte jedoch, dass `tsac` seine eigenen Lizenzbedingungen hat.
+Der Python-Code in diesem Projekt ist unter der CC0 1.0 Universal (CC0 1.0) Public Domain Dedication lizenziert. Du kannst den Code kopieren, modifizieren, verteilen und verwenden, auch für kommerzielle Zwecke, ohne um Erlaubnis zu fragen. Siehe die Datei [LICENSE](LICENSE) für Details. Beachte jedoch, dass `tsac` seine eigenen Lizenzbedingungen hat.
